@@ -10,7 +10,7 @@ xml_path = "models/inverted_pendulum.xml"
 
 model = mujoco.MjModel.from_xml_path(xml_path)
 data = mujoco.MjData(model)
-data.qpos[0] = np.deg2rad(0)
+data.qpos[0] = np.deg2rad(40)
 # Kp = 2
 # Kd = 2
 
@@ -28,22 +28,32 @@ data.qpos[0] = np.deg2rad(0)
 #         viewer.sync()
 #         time.sleep(model.opt.timestep)
  
-# ゲイン
-Kp = 13.0
-Kd = 5.0
- 
- 
-# Viewerつきループ
+# ゲイン　発散しまくりでおわおわり
+# Kp = 35.0
+# Kd = 5.0
+
+Kp = 13.5
+Kd = 1.0
+
+target_angles_deg = [-40, 0, 40]
+target_angles = [deg * 3.1416 / 180.0 for deg in target_angles_deg]
+interval = 5.0
+start_time = time.time()
+
 with mujoco.viewer.launch_passive(model, data) as viewer:
     while viewer.is_running():
+        elapsed = time.time() - start_time
+
+        index = int(elapsed // interval) % len(target_angles)
+        target_theta = target_angles[index]
+
         theta = data.qpos[0]
         omega = data.qvel[0]
-        torque = -Kp * theta - Kd * omega
- 
-        disturbance = np.random.normal(loc=0.0, scale=1.0)
-        data.ctrl[0] = torque + disturbance
- 
+
+        error = theta - target_theta
+        torque = -Kp * error - Kd * omega
+        data.ctrl[0] = torque
+
         mujoco.mj_step(model, data)
- 
-        viewer.sync()                # ステップ後の状態をviewerに反映
-        time.sleep(model.opt.timestep)  # 描画ループ安定化
+        viewer.sync()
+        time.sleep(model.opt.timestep)
