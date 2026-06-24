@@ -25,6 +25,8 @@
     <mesh name="right_fibula"  file="right_fibula.stl"  scale="0.01 0.01 0.01"/>
     <mesh name="left_patella"  file="left_patella.stl"  scale="0.01 0.01 0.01"/>
     <mesh name="right_patella" file="right_patella.stl" scale="0.01 0.01 0.01"/>
+    <mesh name="left_toes"     file="left_toes.stl"     scale="0.01 0.01 0.01"/>
+    <mesh name="right_toes"    file="right_toes.stl"    scale="0.01 0.01 0.01"/>
   </asset>
 
   <worldbody>
@@ -50,6 +52,8 @@
           <geom name="left_tibia" mesh="left_tibia" pos="0.140 -0.030 0.040" mass="0.18"/>
           <geom name="left_fibula" mesh="left_fibula" pos="0.140 -0.030 0.040" mass="0.04"/>
           <geom name="left_patella" mesh="left_patella" pos="0.140 -0.030 0.040" mass="0.02"/>
+          <!-- 足首関節は設けず、足先を下腿に固定する。 -->
+          <geom name="left_toes" mesh="left_toes" pos="0.140 -0.030 0.040" mass="0.06"/>
         </body>
       </body>
 
@@ -64,6 +68,8 @@
           <geom name="right_tibia" mesh="right_tibia" pos="0.140 0.030 0.040" mass="0.18"/>
           <geom name="right_fibula" mesh="right_fibula" pos="0.140 0.030 0.040" mass="0.04"/>
           <geom name="right_patella" mesh="right_patella" pos="0.140 0.030 0.040" mass="0.02"/>
+          <!-- 足首関節は設けず、足先を下腿に固定する。 -->
+          <geom name="right_toes" mesh="right_toes" pos="0.140 0.030 0.040" mass="0.06"/>
         </body>
       </body>
 
