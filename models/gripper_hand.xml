@@ -86,9 +86,9 @@
   </tendon>
 
   <actuator>
-    <motor name="muscle1" tendon="tendon1" ctrlrange="-300 300" ctrllimited="true"/>
-    <motor name="muscle2" tendon="tendon2" ctrlrange="-300 300" ctrllimited="true"/>
-    <motor name="muscle3" tendon="tendon3" ctrlrange="-300 300" ctrllimited="true"/>
+    <motor name="muscle1" tendon="tendon1" ctrlrange="-1 1" gear = "200" ctrllimited="true"/>
+    <motor name="muscle2" tendon="tendon2" ctrlrange="-1 1" gear = "200" ctrllimited="true"/>
+    <motor name="muscle3" tendon="tendon3" ctrlrange="-1 1" gear = "200" ctrllimited="true"/>
   </actuator>
 
 </mujoco>
