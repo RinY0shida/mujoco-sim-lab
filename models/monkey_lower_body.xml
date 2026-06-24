@@ -1,0 +1,105 @@
+<mujoco model="monkey_lower_body">
+  <!-- STL の座標は cm 単位。各メッシュは同じ座標系で作成されている。 -->
+  <compiler angle="degree" meshdir="../meshes/monkey/lower_body"/>
+
+  <option timestep="0.002" integrator="implicitfast"/>
+  <visual>
+    <global offwidth="1280" offheight="720"/>
+    <headlight diffuse="0.7 0.7 0.7" ambient="0.25 0.25 0.25" specular="0.15 0.15 0.15"/>
+  </visual>
+
+  <default>
+    <!-- 骨メッシュ同士の自己衝突は使わず、関節と腱で運動を定義する。 -->
+    <geom type="mesh" contype="0" conaffinity="0" rgba="0.72 0.53 0.32 1"/>
+    <joint damping="0.08" armature="0.002" limited="true"/>
+    <site type="sphere" size="0.004" rgba="0.95 0.15 0.15 0.9"/>
+  </default>
+
+  <asset>
+    <mesh name="hip_bone"      file="hip_bone.stl"      scale="0.01 0.01 0.01"/>
+    <mesh name="left_femur"    file="left_femur.stl"    scale="0.01 0.01 0.01"/>
+    <mesh name="right_femur"   file="right_femur.stl"   scale="0.01 0.01 0.01"/>
+    <mesh name="left_tibia"    file="left_tibia.stl"    scale="0.01 0.01 0.01"/>
+    <mesh name="right_tibia"   file="right_tibia.stl"   scale="0.01 0.01 0.01"/>
+    <mesh name="left_fibula"   file="left_fibula.stl"   scale="0.01 0.01 0.01"/>
+    <mesh name="right_fibula"  file="right_fibula.stl"  scale="0.01 0.01 0.01"/>
+    <mesh name="left_patella"  file="left_patella.stl"  scale="0.01 0.01 0.01"/>
+    <mesh name="right_patella" file="right_patella.stl" scale="0.01 0.01 0.01"/>
+  </asset>
+
+  <worldbody>
+    <light name="key" pos="-0.1 -0.4 0.35" dir="0.1 0.4 -0.35" directional="true"/>
+    <geom name="ground" type="plane" size="1 1 0.1" pos="0 0 -0.13" rgba="0.16 0.18 0.20 1"/>
+
+    <!--
+      各 body 原点を関節中心に置き、mesh geom にはその逆並進を与える。
+      qpos=0 では STL の元の共通座標配置が厳密に保たれる。
+    -->
+    <body name="pelvis">
+      <geom name="hip_bone" mesh="hip_bone" mass="0.45"/>
+
+      <!-- 股関節中心（m）。メッシュ上の大腿骨頭／寛骨臼に合わせる調整点。 -->
+      <body name="left_femur_body" pos="-0.145 0.028 0.055">
+        <joint name="left_hip" type="hinge" axis="0 1 0" range="-45 45"/>
+        <geom name="left_femur" mesh="left_femur" pos="0.145 -0.028 -0.055" mass="0.22"/>
+        <site name="left_flex_insertion" pos="0.015 0.009 -0.020"/>
+        <site name="left_ext_insertion" pos="-0.015 0.009 -0.020"/>
+
+        <body name="left_shank" pos="0.005 0.002 -0.095">
+          <joint name="left_knee" type="hinge" axis="0 1 0" range="-120 15"/>
+          <geom name="left_tibia" mesh="left_tibia" pos="0.140 -0.030 0.040" mass="0.18"/>
+          <geom name="left_fibula" mesh="left_fibula" pos="0.140 -0.030 0.040" mass="0.04"/>
+          <geom name="left_patella" mesh="left_patella" pos="0.140 -0.030 0.040" mass="0.02"/>
+        </body>
+      </body>
+
+      <body name="right_femur_body" pos="-0.145 -0.028 0.055">
+        <joint name="right_hip" type="hinge" axis="0 1 0" range="-45 45"/>
+        <geom name="right_femur" mesh="right_femur" pos="0.145 0.028 -0.055" mass="0.22"/>
+        <site name="right_flex_insertion" pos="0.015 -0.009 -0.020"/>
+        <site name="right_ext_insertion" pos="-0.015 -0.009 -0.020"/>
+
+        <body name="right_shank" pos="0.005 -0.002 -0.095">
+          <joint name="right_knee" type="hinge" axis="0 1 0" range="-120 15"/>
+          <geom name="right_tibia" mesh="right_tibia" pos="0.140 0.030 0.040" mass="0.18"/>
+          <geom name="right_fibula" mesh="right_fibula" pos="0.140 0.030 0.040" mass="0.04"/>
+          <geom name="right_patella" mesh="right_patella" pos="0.140 0.030 0.040" mass="0.02"/>
+        </body>
+      </body>
+
+      <!-- origin は骨盤座標、insertion は各大腿 body 座標に属する。 -->
+      <site name="left_flex_origin" pos="-0.125 0.040 0.072"/>
+      <site name="left_ext_origin" pos="-0.165 0.040 0.072"/>
+      <site name="right_flex_origin" pos="-0.125 -0.040 0.072"/>
+      <site name="right_ext_origin" pos="-0.165 -0.040 0.072"/>
+    </body>
+  </worldbody>
+
+  <tendon>
+    <spatial name="left_hip_flexor" width="0.0025" rgba="0.9 0.15 0.15 1">
+      <site site="left_flex_origin"/>
+      <site site="left_flex_insertion"/>
+    </spatial>
+    <spatial name="left_hip_extensor" width="0.0025" rgba="0.15 0.35 0.95 1">
+      <site site="left_ext_origin"/>
+      <site site="left_ext_insertion"/>
+    </spatial>
+    <spatial name="right_hip_flexor" width="0.0025" rgba="0.9 0.15 0.15 1">
+      <site site="right_flex_origin"/>
+      <site site="right_flex_insertion"/>
+    </spatial>
+    <spatial name="right_hip_extensor" width="0.0025" rgba="0.15 0.35 0.95 1">
+      <site site="right_ext_origin"/>
+      <site site="right_ext_insertion"/>
+    </spatial>
+  </tendon>
+
+  <actuator>
+    <muscle name="left_hip_flexor" tendon="left_hip_flexor" ctrlrange="0 1" force="35"/>
+    <muscle name="left_hip_extensor" tendon="left_hip_extensor" ctrlrange="0 1" force="35"/>
+    <muscle name="right_hip_flexor" tendon="right_hip_flexor" ctrlrange="0 1" force="35"/>
+    <muscle name="right_hip_extensor" tendon="right_hip_extensor" ctrlrange="0 1" force="35"/>
+  </actuator>
+
+  <statistic center="-0.15 0 -0.01" extent="0.30"/>
+</mujoco>
