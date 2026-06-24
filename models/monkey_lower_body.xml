@@ -46,14 +46,25 @@
         <geom name="left_femur" mesh="left_femur" pos="0.145 -0.028 -0.055" mass="0.22"/>
         <site name="left_flex_insertion" pos="0.015 0.009 -0.020"/>
         <site name="left_ext_insertion" pos="-0.015 0.009 -0.020"/>
+        <!-- 大腿骨上部から下腿へ渡す、膝筋の起点。 -->
+        <site name="left_knee_flex_origin" pos="-0.020 0.010 -0.030"/>
+        <site name="left_knee_ext_origin" pos="0.020 0.010 -0.030"/>
+        <!-- 遠位大腿骨のガイド点。腱を同じ側の下腿付着点へ導く。 -->
+        <!-- 膝関節面の直後に置き、屈筋腱を関節の後方へ導く。 -->
+        <site name="left_knee_flex_guide" pos="0.003 0.010 -0.094"/>
 
         <body name="left_shank" pos="0.005 0.002 -0.095">
-          <joint name="left_knee" type="hinge" axis="0 1 0" range="-120 15"/>
+          <!-- 正方向を後屈に使用し、大腿骨側へ折れ込む前屈は 15° に制限する。 -->
+          <joint name="left_knee" type="hinge" axis="0 1 0" range="-15 100"/>
           <geom name="left_tibia" mesh="left_tibia" pos="0.140 -0.030 0.040" mass="0.18"/>
           <geom name="left_fibula" mesh="left_fibula" pos="0.140 -0.030 0.040" mass="0.04"/>
           <geom name="left_patella" mesh="left_patella" pos="0.140 -0.030 0.040" mass="0.02"/>
           <!-- 足首関節は設けず、足先を下腿に固定する。 -->
           <geom name="left_toes" mesh="left_toes" pos="0.140 -0.030 0.040" mass="0.06"/>
+          <site name="left_knee_flex_insertion" pos="-0.020 0.010 -0.040"/>
+          <site name="left_knee_ext_insertion" pos="0.020 0.010 -0.040"/>
+          <!-- 膝蓋骨メッシュの中心付近。伸筋腱の前方ガイドとして使う。 -->
+          <site name="left_patella_guide" pos="0.039 0.007 -0.001"/>
         </body>
       </body>
 
@@ -62,14 +73,25 @@
         <geom name="right_femur" mesh="right_femur" pos="0.145 0.028 -0.055" mass="0.22"/>
         <site name="right_flex_insertion" pos="0.015 -0.009 -0.020"/>
         <site name="right_ext_insertion" pos="-0.015 -0.009 -0.020"/>
+        <!-- 大腿骨上部から下腿へ渡す、膝筋の起点。 -->
+        <site name="right_knee_flex_origin" pos="-0.020 -0.010 -0.030"/>
+        <site name="right_knee_ext_origin" pos="0.020 -0.010 -0.030"/>
+        <!-- 遠位大腿骨のガイド点。腱を同じ側の下腿付着点へ導く。 -->
+        <!-- 膝関節面の直後に置き、屈筋腱を関節の後方へ導く。 -->
+        <site name="right_knee_flex_guide" pos="0.003 -0.010 -0.094"/>
 
         <body name="right_shank" pos="0.005 -0.002 -0.095">
-          <joint name="right_knee" type="hinge" axis="0 1 0" range="-120 15"/>
+          <!-- 正方向を後屈に使用し、大腿骨側へ折れ込む前屈は 15° に制限する。 -->
+          <joint name="right_knee" type="hinge" axis="0 1 0" range="-15 100"/>
           <geom name="right_tibia" mesh="right_tibia" pos="0.140 0.030 0.040" mass="0.18"/>
           <geom name="right_fibula" mesh="right_fibula" pos="0.140 0.030 0.040" mass="0.04"/>
           <geom name="right_patella" mesh="right_patella" pos="0.140 0.030 0.040" mass="0.02"/>
           <!-- 足首関節は設けず、足先を下腿に固定する。 -->
           <geom name="right_toes" mesh="right_toes" pos="0.140 0.030 0.040" mass="0.06"/>
+          <site name="right_knee_flex_insertion" pos="-0.020 -0.010 -0.040"/>
+          <site name="right_knee_ext_insertion" pos="0.020 -0.010 -0.040"/>
+          <!-- 膝蓋骨メッシュの中心付近。伸筋腱の前方ガイドとして使う。 -->
+          <site name="right_patella_guide" pos="0.039 -0.007 -0.001"/>
         </body>
       </body>
 
@@ -98,6 +120,27 @@
       <site site="right_ext_origin"/>
       <site site="right_ext_insertion"/>
     </spatial>
+    <!-- 大腿骨から下腿へ交差する、膝の拮抗筋ペア。 -->
+    <spatial name="left_knee_flexor" width="0.004" rgba="0.9 0.55 0.10 1">
+      <site site="left_knee_flex_origin"/>
+      <site site="left_knee_flex_guide"/>
+      <site site="left_knee_flex_insertion"/>
+    </spatial>
+    <spatial name="left_knee_extensor" width="0.004" rgba="0.20 0.80 0.30 1">
+      <site site="left_knee_ext_origin"/>
+      <site site="left_patella_guide"/>
+      <site site="left_knee_ext_insertion"/>
+    </spatial>
+    <spatial name="right_knee_flexor" width="0.004" rgba="0.9 0.55 0.10 1">
+      <site site="right_knee_flex_origin"/>
+      <site site="right_knee_flex_guide"/>
+      <site site="right_knee_flex_insertion"/>
+    </spatial>
+    <spatial name="right_knee_extensor" width="0.004" rgba="0.20 0.80 0.30 1">
+      <site site="right_knee_ext_origin"/>
+      <site site="right_patella_guide"/>
+      <site site="right_knee_ext_insertion"/>
+    </spatial>
   </tendon>
 
   <actuator>
@@ -105,6 +148,10 @@
     <muscle name="left_hip_extensor" tendon="left_hip_extensor" ctrlrange="0 1" force="35"/>
     <muscle name="right_hip_flexor" tendon="right_hip_flexor" ctrlrange="0 1" force="35"/>
     <muscle name="right_hip_extensor" tendon="right_hip_extensor" ctrlrange="0 1" force="35"/>
+    <muscle name="left_knee_flexor" tendon="left_knee_flexor" ctrlrange="0 1" force="500"/>
+    <muscle name="left_knee_extensor" tendon="left_knee_extensor" ctrlrange="0 1" force="25"/>
+    <muscle name="right_knee_flexor" tendon="right_knee_flexor" ctrlrange="0 1" force="500"/>
+    <muscle name="right_knee_extensor" tendon="right_knee_extensor" ctrlrange="0 1" force="25"/>
   </actuator>
 
   <statistic center="-0.15 0 -0.01" extent="0.30"/>
